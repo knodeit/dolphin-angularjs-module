@@ -42,16 +42,15 @@ function loadAllAssets(module, AssetManagerConfigurationFactory) {
     return deferred.promise;
 }
 
-
 myModule.run(function (AngularJsConfigurationFactory, AssetManagerConfigurationFactory, WebServerConfigurationFactory) {
     var funcs = [];
     var modules = AngularJsConfigurationFactory.getModules();
     for (var i in modules) {
-        funcs.push(loadAllAssets(modules[i], AssetManagerConfigurationFactory));
+        funcs.push(loadAllAssets(modules[i].module, AssetManagerConfigurationFactory));
 
         //static views
         //url: name_of_module/views/
-        WebServerConfigurationFactory.addStaticSource({url: '/' + modules[i].name + '/' + VIEWS_FOLDER, path: modules[i].resolvePath(PathUtil.join(PUBLIC_FOLDER, VIEWS_FOLDER))});
+        WebServerConfigurationFactory.addStaticSource({url: '/' + modules[i].module.name + '/' + VIEWS_FOLDER, path: modules[i].module.resolvePath(PathUtil.join(PUBLIC_FOLDER, VIEWS_FOLDER))});
     }
     Q.all(funcs).then(function () {
         deferred.resolve();
