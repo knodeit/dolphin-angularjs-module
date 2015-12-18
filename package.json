@@ -1,6 +1,6 @@
 {
     "name": "dolphin-angularjs-package",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "preferGlobal": false,
     "description": "Angular JS",
     "repository": {

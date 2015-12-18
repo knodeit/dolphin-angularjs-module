@@ -15,8 +15,9 @@ package_folder
    public
       assets // just example for assets 
           css
-          fonts
-          images  
+          static
+             fonts
+             images
       controllers
       directives
       routes
