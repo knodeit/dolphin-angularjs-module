@@ -1,5 +1,5 @@
 {
-    "name": "dolphin-angularjs-package",
+    "name": "dolphin-angularjs-module",
     "version": "0.0.4",
     "preferGlobal": false,
     "description": "Angular JS",
