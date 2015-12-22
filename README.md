@@ -22,7 +22,10 @@ package_folder
       directives
       routes
       services
+      providers
+      filters
       views
+      any_files_here.js
 ```
 
 Access to view folder you can get like this: `/Name_Of_Module/views`
