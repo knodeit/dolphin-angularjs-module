@@ -31,7 +31,6 @@ function loadAllAssets(module, AssetManagerConfigurationFactory) {
     Q.all(funcs).then(function (jsResult) {
         jsResult.forEach(function (files) {
             files.forEach(function (file) {
-                console.log('file', file);
                 AssetManagerConfigurationFactory.addCustomScript(file);
             });
         });
