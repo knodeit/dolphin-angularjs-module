@@ -6,6 +6,7 @@ var Module = require('dolphin-core-modules').Module;
 var FSUtil = require('dolphin-core-utils').FS;
 var PathUtil = require('path');
 var Q = require('q');
+var fs = require('fs');
 var myModule = new Module('AngularJs', __dirname);
 var deferred = Q.defer();
 var PUBLIC_FOLDER = 'public';
@@ -80,8 +81,6 @@ function readFolder(path) {
 }
 
 myModule.run(function (AngularJsConfigurationFactory, AssetManagerConfigurationFactory, WebServerConfigurationFactory) {
-    AssetManagerConfigurationFactory.addVendorScript(__dirname + '/init.js');
-
     var funcs = [];
     var modules = AngularJsConfigurationFactory.getModules();
     for (var i in modules) {
@@ -92,6 +91,12 @@ myModule.run(function (AngularJsConfigurationFactory, AssetManagerConfigurationF
         WebServerConfigurationFactory.addStaticSource({url: '/' + modules[i].module.name + '/' + VIEWS_FOLDER, path: modules[i].module.resolvePath(PathUtil.join(PUBLIC_FOLDER, VIEWS_FOLDER))});
     }
     Q.all(funcs).then(function () {
+
+        //making a file
+        var file = __dirname + '/angular-dolphin.js';
+        var modules = AngularJsConfigurationFactory.getAngularModules();
+        fs.writeFileSync(file, 'window.dolphin = {};window.dolphin.modules=' + JSON.stringify(modules) + ';', 'utf-8');
+        AssetManagerConfigurationFactory.addCustomScript(file);
         deferred.resolve();
     });
 });
