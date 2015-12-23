@@ -80,6 +80,8 @@ function readFolder(path) {
 }
 
 myModule.run(function (AngularJsConfigurationFactory, AssetManagerConfigurationFactory, WebServerConfigurationFactory) {
+    AssetManagerConfigurationFactory.addVendorScript(__dirname + '/init.js');
+
     var funcs = [];
     var modules = AngularJsConfigurationFactory.getModules();
     for (var i in modules) {
