@@ -5,4 +5,3 @@
 
 //init dolphin
 window.dolphin = {};
-window.dolphin.modules = [];

@@ -10,63 +10,50 @@ var fs = require('fs');
 var myModule = new Module('AngularJs', __dirname);
 var deferred = Q.defer();
 var PUBLIC_FOLDER = 'public';
-var ANGULAR_PATH = ['controllers/**/*.js', 'directives/**/*.js', 'routes/**/*.js', 'filters/**/*.js', 'providers/**/*.js', 'services/**/*.js', '*.js'];
+var ANGULAR_PATH = ['controllers/**/*.js', 'directives/**/*.js', 'routes/**/*.js', 'filters/**/*.js', 'providers/**/*.js', 'services/**/*.js', 'vendor/**/*.js'];
 var CSS_FOLDER = 'assets/css';
 var STATIC_FOLDER = 'assets/static';
 var VIEWS_FOLDER = 'views';
 
 myModule.configureFactories(function (AssetManagerConfigurationFactory) {
     AssetManagerConfigurationFactory.addPromise(deferred.promise);
-    AssetManagerConfigurationFactory.addCustomScript(myModule.resolvePath('angular-bootstrap.js'));
+    AssetManagerConfigurationFactory.addVendorScriptBefore(myModule.resolvePath('init.js'));
+    AssetManagerConfigurationFactory.addCustomScriptBefore(myModule.resolvePath('angular-bootstrap.js'));
 });
 
 function loadAllAssets(module, AssetManagerConfigurationFactory) {
     var deferred = Q.defer();
 
-    //load js
-    var funcs = [];
-    for (var i in ANGULAR_PATH) {
-        funcs.push(readFolder(module.resolvePath(PathUtil.join(PUBLIC_FOLDER, ANGULAR_PATH[i]))));
-    }
-
-    Q.all(funcs).then(function (jsResult) {
-        jsResult.forEach(function (files) {
-            files.forEach(function (file) {
-                AssetManagerConfigurationFactory.addCustomScript(file);
-            });
-        });
-
-        //load css
-        FSUtil.readDir(module.resolvePath(PathUtil.join(PUBLIC_FOLDER, CSS_FOLDER, '/**/*'))).then(function (files) {
-            files.forEach(function (file) {
-                AssetManagerConfigurationFactory.addCustomStyles(file);
-            });
-
-            //copy assets
-            AssetManagerConfigurationFactory.addAssetFolder(module.resolvePath(PathUtil.join(PUBLIC_FOLDER, STATIC_FOLDER, '/**/*')));
-
-            //exit
-            deferred.resolve();
-        });
-    });
-
-    //load js
-    FSUtil.readDir(module.resolvePath(PathUtil.join(PUBLIC_FOLDER, '/**/*.js'))).then(function (files) {
+    //load all angular modules
+    readFolder(module.resolvePath(PathUtil.join(PUBLIC_FOLDER, '*.js'))).then(function (files) {
         files.forEach(function (file) {
-            AssetManagerConfigurationFactory.addCustomScript(file);
+            AssetManagerConfigurationFactory.addCustomScriptBefore(file);
         });
 
-        //load css
-        FSUtil.readDir(module.resolvePath(PathUtil.join(PUBLIC_FOLDER, CSS_FOLDER, '/**/*'))).then(function (files) {
-            files.forEach(function (file) {
-                AssetManagerConfigurationFactory.addCustomStyles(file);
+        var funcs = [];
+        for (var i in ANGULAR_PATH) {
+            funcs.push(readFolder(module.resolvePath(PathUtil.join(PUBLIC_FOLDER, ANGULAR_PATH[i]))));
+        }
+
+        Q.all(funcs).then(function (jsResult) {
+            jsResult.forEach(function (files) {
+                files.forEach(function (file) {
+                    AssetManagerConfigurationFactory.addCustomScript(file);
+                });
             });
 
-            //copy assets
-            AssetManagerConfigurationFactory.addAssetFolder(module.resolvePath(PathUtil.join(PUBLIC_FOLDER, STATIC_FOLDER, '/**/*')));
+            //load css
+            FSUtil.readDir(module.resolvePath(PathUtil.join(PUBLIC_FOLDER, CSS_FOLDER, '/**/*'))).then(function (files) {
+                files.forEach(function (file) {
+                    AssetManagerConfigurationFactory.addCustomStyles(file);
+                });
 
-            //exit
-            deferred.resolve();
+                //copy assets
+                AssetManagerConfigurationFactory.addAssetFolder(module.resolvePath(PathUtil.join(PUBLIC_FOLDER, STATIC_FOLDER, '/**/*')));
+
+                //exit
+                deferred.resolve();
+            });
         });
     });
     return deferred.promise;
@@ -95,8 +82,8 @@ myModule.run(function (AngularJsConfigurationFactory, AssetManagerConfigurationF
         //making a file
         var file = __dirname + '/angular-dolphin.js';
         var modules = AngularJsConfigurationFactory.getAngularModules();
-        fs.writeFileSync(file, 'window.dolphin = {};window.dolphin.modules=' + JSON.stringify(modules) + ';', 'utf-8');
-        AssetManagerConfigurationFactory.addCustomScript(file);
+        fs.writeFileSync(file, 'window.dolphin.modules=' + JSON.stringify(modules) + ';', 'utf-8');
+        AssetManagerConfigurationFactory.addVendorScriptAfter(file);
         deferred.resolve();
     });
 });
