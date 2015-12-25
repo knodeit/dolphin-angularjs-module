@@ -6,7 +6,6 @@ var Module = require('dolphin-core-modules').Module;
 var FSUtil = require('dolphin-core-utils').FS;
 var PathUtil = require('path');
 var Q = require('q');
-var fs = require('fs');
 var myModule = new Module('AngularJs', __dirname);
 var deferred = Q.defer();
 var PUBLIC_FOLDER = 'public';
@@ -15,9 +14,8 @@ var CSS_FOLDER = 'assets/css';
 var STATIC_FOLDER = 'assets/static';
 var VIEWS_FOLDER = 'views';
 
-myModule.configureFactories(function (AssetManagerConfigurationFactory) {
+myModule.configureFactories(function (AssetManagerConfigurationFactory, JsExporterConfigurationFactory) {
     AssetManagerConfigurationFactory.addPromise(deferred.promise);
-    AssetManagerConfigurationFactory.addVendorScriptBefore(myModule.resolvePath('init.js'));
     AssetManagerConfigurationFactory.addCustomScriptBefore(myModule.resolvePath('angular-bootstrap.js'));
 });
 
@@ -67,7 +65,7 @@ function readFolder(path) {
     return deferred.promise;
 }
 
-myModule.run(function (AngularJsConfigurationFactory, AssetManagerConfigurationFactory, WebServerConfigurationFactory) {
+myModule.run(function (AngularJsConfigurationFactory, AssetManagerConfigurationFactory, WebServerConfigurationFactory, JsExporterConfigurationFactory) {
     var funcs = [];
     var modules = AngularJsConfigurationFactory.getModules();
     for (var i in modules) {
@@ -78,12 +76,7 @@ myModule.run(function (AngularJsConfigurationFactory, AssetManagerConfigurationF
         WebServerConfigurationFactory.addStaticSource({url: '/' + modules[i].module.name + '/' + VIEWS_FOLDER, path: modules[i].module.resolvePath(PathUtil.join(PUBLIC_FOLDER, VIEWS_FOLDER))});
     }
     Q.all(funcs).then(function () {
-
-        //making a file
-        var file = __dirname + '/angular-dolphin.js';
-        var modules = AngularJsConfigurationFactory.getAngularModules();
-        fs.writeFileSync(file, 'window.dolphin.modules=' + JSON.stringify(modules) + ';', 'utf-8');
-        AssetManagerConfigurationFactory.addVendorScriptAfter(file);
+        JsExporterConfigurationFactory.addObject('angularModules', AngularJsConfigurationFactory.getAngularModules());
         deferred.resolve();
     });
 });

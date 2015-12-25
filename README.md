@@ -25,7 +25,7 @@ package_folder
       providers
       filters
       views
-      any_files_here.js
+      angular_module.js // will include firstly
 ```
 
 Access to view folder you can get like this: `/Name_Of_Module/views`
