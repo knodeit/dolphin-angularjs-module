@@ -43,7 +43,7 @@ function loadAllAssets(module, AssetManagerConfigurationFactory) {
             //load css
             FSUtil.readDir(module.resolvePath(PathUtil.join(PUBLIC_FOLDER, CSS_FOLDER, '/**/*'))).then(function (files) {
                 files.forEach(function (file) {
-                    AssetManagerConfigurationFactory.addCustomStyles(file);
+                    AssetManagerConfigurationFactory.addCustomStyle(file);
                 });
 
                 //copy assets
