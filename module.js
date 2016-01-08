@@ -10,8 +10,6 @@ var myModule = new Module('AngularJs', __dirname);
 var deferred = Q.defer();
 var PUBLIC_FOLDER = 'public';
 var ANGULAR_PATH = ['controllers/**/*.js', 'directives/**/*.js', 'routes/**/*.js', 'filters/**/*.js', 'providers/**/*.js', 'services/**/*.js', 'vendor/**/*.js'];
-var CSS_FOLDER = 'assets/css';
-var STATIC_FOLDER = 'assets/static';
 var VIEWS_FOLDER = 'views';
 
 myModule.configureFactories(function (AssetManagerConfigurationFactory, JsExporterConfigurationFactory) {
@@ -40,18 +38,8 @@ function loadAllAssets(module, AssetManagerConfigurationFactory) {
                 });
             });
 
-            //load css
-            FSUtil.readDir(module.resolvePath(PathUtil.join(PUBLIC_FOLDER, CSS_FOLDER, '/**/*'))).then(function (files) {
-                files.forEach(function (file) {
-                    AssetManagerConfigurationFactory.addCustomStyle(file);
-                });
-
-                //copy assets
-                AssetManagerConfigurationFactory.addAssetFolder(module.resolvePath(PathUtil.join(PUBLIC_FOLDER, STATIC_FOLDER, '/**/*')));
-
-                //exit
-                deferred.resolve();
-            });
+            //exit
+            deferred.resolve();
         });
     });
     return deferred.promise;

@@ -13,17 +13,13 @@ When you call "addModule" the plugin will read all folders in public folder:
 ```
 package_folder
    public
-      assets // just example for assets 
-          css
-          static
-             fonts
-             images
       controllers
       directives
       routes
       services
       providers
       filters
+      vendor
       views
       angular_module.js // will include firstly
 ```
