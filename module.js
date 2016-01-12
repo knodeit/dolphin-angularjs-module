@@ -12,7 +12,7 @@ var PUBLIC_FOLDER = 'public';
 var ANGULAR_PATH = ['controllers/**/*.js', 'directives/**/*.js', 'routes/**/*.js', 'filters/**/*.js', 'providers/**/*.js', 'services/**/*.js', 'vendor/**/*.js'];
 var VIEWS_FOLDER = 'views';
 
-myModule.configureFactories(function (AssetManagerConfigurationFactory, JsExporterConfigurationFactory) {
+myModule.configureFactories(function (AssetManagerConfigurationFactory) {
     AssetManagerConfigurationFactory.addPromise(deferred.promise);
     AssetManagerConfigurationFactory.addCustomScriptBefore(myModule.resolvePath('angular-bootstrap.js'));
 });
@@ -65,6 +65,7 @@ myModule.run(function (AngularJsConfigurationFactory, AssetManagerConfigurationF
     }
     Q.all(funcs).then(function () {
         JsExporterConfigurationFactory.addObject('angularModules', AngularJsConfigurationFactory.getAngularModules());
+        JsExporterConfigurationFactory.addObject('systemAngularModules', AngularJsConfigurationFactory.getSystemAngularModules());
         deferred.resolve();
     });
 });
