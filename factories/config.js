@@ -20,7 +20,7 @@ module.exports = {
             });
         },
         getSystemAngularModules: function () {
-            return systemAngulaModules;
+            return _.uniq(systemAngulaModules);
         },
         addModule: function (name, module) {
             modules.push({
@@ -29,12 +29,13 @@ module.exports = {
             });
         },
         getModules: function () {
-            return modules;
+            return _.uniq(modules);
         },
         getAngularModules: function () {
-            return modules.map(function (module) {
+            var array = modules.map(function (module) {
                 return module.name;
             });
+            return _.uniq(array);
         }
     }
 };
